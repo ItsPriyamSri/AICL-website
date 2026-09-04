@@ -47,7 +47,8 @@ export function NeuralCanvas() {
     const ambientAlpha = isDark ? 0.15 : 0.08;
 
     const createParticles = (w: number, h: number) => {
-      const count = Math.min(Math.max(Math.floor(w / 22), 35), 70);
+      // Reduced particle density by ~30% for cleaner, more elegant constellation spacing
+      const count = Math.min(Math.max(Math.floor(w / 32), 24), 50);
       const list: Particle[] = [];
       for (let i = 0; i < count; i++) {
         list.push({
