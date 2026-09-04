@@ -1,7 +1,32 @@
-@import url("https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap");
 @import "tailwindcss";
 
-:root {
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+:root,
+.dark,
+[data-theme="dark"] {
   --bg: #0B0B10;
   --bg-elevated: #14141C;
   --bg-card: #181821;
@@ -11,9 +36,7 @@
   --accent: #C6FF3D;
   --accent-2: #E8AE45;
   --radius: 18px;
-  --font-clash: "Clash Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-inter: var(--font-sans-fallback, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
-  --font-jetbrains: var(--font-mono-fallback, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+  --font-clash: "Clash Display", sans-serif;
 }
 
 .light,
@@ -37,9 +60,9 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
-  --font-display: var(--font-clash);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains);
+  --font-display: var(--font-clash), "Clash Display", sans-serif;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains), monospace;
 }
 
 * {
@@ -53,6 +76,10 @@ html {
 
 html.light {
   color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 body {
@@ -71,24 +98,29 @@ body {
 
 /* Headings */
 h1, .h1 {
-  font-family: var(--font-clash), sans-serif;
+  font-family: var(--font-clash), "Clash Display", sans-serif;
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.02em;
 }
 
 h2, .h2 {
-  font-family: var(--font-clash), sans-serif;
-  font-weight: 700;
+  font-family: var(--font-clash), "Clash Display", sans-serif;
+  font-weight: 600;
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   font-size: clamp(2rem, 4vw, 3.25rem);
 }
 
 h3, .h3 {
-  font-family: var(--font-clash), sans-serif;
-  font-weight: 700;
+  font-family: var(--font-clash), "Clash Display", sans-serif;
+  font-weight: 600;
   letter-spacing: -0.01em;
+}
+
+h4, .h4, h5, .h5, h6, .h6 {
+  font-family: var(--font-clash), "Clash Display", sans-serif;
+  font-weight: 500;
 }
 
 /* Utility classes */
@@ -101,7 +133,15 @@ h3, .h3 {
 }
 
 .font-display {
-  font-family: var(--font-clash), sans-serif;
+  font-family: var(--font-clash), "Clash Display", sans-serif;
+}
+
+.font-sans {
+  font-family: var(--font-inter), sans-serif;
+}
+
+.font-mono {
+  font-family: var(--font-jetbrains), monospace;
 }
 
 /* Grain texture overlay */
