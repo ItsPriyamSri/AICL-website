@@ -14,14 +14,16 @@ import {
 } from "lucide-react";
 import { JaaliPattern } from "@/components/JaaliPattern";
 import { TiltCard } from "@/components/TiltCard";
+import { NeuralCanvas } from "@/components/NeuralCanvas";
 
 export default function HomePage() {
   return (
     <div className="flex flex-col w-full">
       {/* 1. HERO SECTION */}
       <section className="relative min-h-[90vh] lg:min-h-screen w-full flex flex-col justify-center items-center py-20 px-6 md:px-12 select-none overflow-hidden">
-        {/* Background Jaali Pattern */}
+        {/* Background Neural Canvas & Jaali Pattern */}
         <div className="hero-bg-container absolute inset-0 -z-10 h-[115%] w-full pointer-events-none">
+          <NeuralCanvas />
           <JaaliPattern opacity={0.04} />
         </div>
 

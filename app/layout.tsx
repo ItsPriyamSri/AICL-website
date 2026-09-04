@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { GrainOverlay } from "@/components/GrainOverlay";
 import { CustomCursor } from "@/components/CustomCursor";
+import { IntroLoader } from "@/components/IntroLoader";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -126,6 +127,7 @@ export default function RootLayout({
           storageKey="theme"
           disableTransitionOnChange
         >
+          <IntroLoader />
           <GrainOverlay />
           <CustomCursor />
           <div className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-bg text-fg">
