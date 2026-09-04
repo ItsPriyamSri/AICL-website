@@ -91,6 +91,15 @@ body {
   min-height: 100vh;
 }
 
+/* Hide native OS cursor so only custom neon dot and follow ring are visible */
+@media (pointer: fine) {
+  html,
+  body,
+  body * {
+    cursor: none !important;
+  }
+}
+
 ::selection {
   background-color: var(--accent);
   color: #0b0b10;

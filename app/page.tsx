@@ -67,16 +67,22 @@ export default function HomePage() {
           </h1>
 
           {/* Subtitle */}
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="font-sans text-muted max-w-2xl mb-10 text-base md:text-lg leading-relaxed px-2"
+            className="relative max-w-2xl mb-10 px-4 py-2"
           >
-            Building the AI/ML community in the City of Nawabs. Join us for workshops, hackathons,
-            and collaborative projects that push the boundaries of machine learning and artificial
-            intelligence.
-          </motion.p>
+            <div
+              className="absolute inset-0 -z-10 rounded-2xl bg-radial from-bg/95 via-bg/60 to-transparent blur-md pointer-events-none"
+              aria-hidden="true"
+            />
+            <p className="font-sans text-muted text-base md:text-lg leading-relaxed relative z-10 [text-shadow:0_1px_12px_var(--bg)]">
+              Building the AI/ML community in the City of Nawabs. Join us for workshops, hackathons,
+              and collaborative projects that push the boundaries of machine learning and artificial
+              intelligence.
+            </p>
+          </motion.div>
 
           {/* Action CTAs */}
           <motion.div

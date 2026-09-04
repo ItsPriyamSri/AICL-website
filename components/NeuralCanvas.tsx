@@ -121,125 +121,171 @@ export function NeuralCanvas() {
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     window.addEventListener("mouseleave", handleMouseLeave, { passive: true });
 
-    // Dedicated continuous RAF loop
-    const maxDistance = 125;
-    const mouseMaxDistance = 150;
+      // Dedicated continuous RAF loop
+      const maxDistance = 125;
+      const mouseMaxDistance = 150;
 
-    const render = () => {
-      if (document.hidden) {
-        animationFrameRef.current = requestAnimationFrame(render);
-        return;
-      }
+      // Text clearance zone (centered at hero display heading & subtitle)
+      const textCenterX = width * 0.5;
+      const textCenterY = height * 0.44;
+      const textRadiusX = Math.min(width * 0.46, 420);
+      const textRadiusY = Math.min(height * 0.22, 130);
 
-      ctx.clearRect(0, 0, width, height);
+      const getTextAttenuation = (px: number, py: number) => {
+        const dx = (px - textCenterX) / textRadiusX;
+        const dy = (py - textCenterY) / textRadiusY;
+        const dSq = dx * dx + dy * dy;
+        if (dSq >= 1) return 1.0;
+        // Smooth quadratic attenuation down to 0.15 at center
+        return Math.max(0.15, dSq * dSq);
+      };
 
-      const mouse = mouseRef.current;
-
-      // 1. Constellation lines between nearby particles
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.hypot(dx, dy);
-
-          if (dist < maxDistance) {
-            const alpha = (1 - dist / maxDistance) * baseLineAlpha;
-            ctx.strokeStyle = accentColor;
-            ctx.globalAlpha = alpha;
-            ctx.lineWidth = 0.8;
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
+      const render = () => {
+        if (document.hidden) {
+          animationFrameRef.current = requestAnimationFrame(render);
+          return;
         }
 
-        // 2. Interactive line connecting firefly to mouse cursor
-        if (mouse.x !== null && mouse.y !== null) {
-          const mdx = particles[i].x - mouse.x;
-          const mdy = particles[i].y - mouse.y;
-          const mdist = Math.hypot(mdx, mdy);
-          if (mdist < mouseMaxDistance) {
-            const mAlpha = (1 - mdist / mouseMaxDistance) * (baseLineAlpha * 1.5);
-            ctx.strokeStyle = accentColor;
-            ctx.globalAlpha = mAlpha;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.stroke();
-          }
-        }
-      }
+        ctx.clearRect(0, 0, width, height);
 
-      // 3. Render and animate Glowing Firefly Particles
-      particles.forEach((p) => {
-        if (!prefersReducedMotion) {
-          p.x += p.vx;
-          p.y += p.vy;
+        const mouse = mouseRef.current;
 
-          // Bounce off canvas boundaries
-          if (p.x < 0) {
-            p.x = 0;
-            p.vx *= -1;
-          } else if (p.x > width) {
-            p.x = width;
-            p.vx *= -1;
-          }
+        // 1. Constellation lines between nearby particles
+        for (let i = 0; i < particles.length; i++) {
+          const attenI = getTextAttenuation(particles[i].x, particles[i].y);
 
-          if (p.y < 0) {
-            p.y = 0;
-            p.vy *= -1;
-          } else if (p.y > height) {
-            p.y = height;
-            p.vy *= -1;
-          }
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.hypot(dx, dy);
 
-          // Gentle mouse repulsion
-          if (mouse.x !== null && mouse.y !== null) {
-            const mdx = p.x - mouse.x;
-            const mdy = p.y - mouse.y;
-            const mdist = Math.hypot(mdx, mdy);
-            if (mdist < 100 && mdist > 0) {
-              const force = (100 - mdist) / 100;
-              p.x += (mdx / mdist) * force * 1.5;
-              p.y += (mdy / mdist) * force * 1.5;
+            if (dist < maxDistance) {
+              const attenJ = getTextAttenuation(particles[j].x, particles[j].y);
+              const lineAtten = Math.min(attenI, attenJ);
+
+              if (lineAtten > 0.05) {
+                const alpha =
+                  (1 - dist / maxDistance) * baseLineAlpha * lineAtten;
+                ctx.strokeStyle = accentColor;
+                ctx.globalAlpha = alpha;
+                ctx.lineWidth = 0.8;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.stroke();
+              }
             }
           }
 
-          p.pulsePhase += p.pulseSpeed;
+          // 2. Interactive line connecting firefly to mouse cursor
+          if (mouse.x !== null && mouse.y !== null) {
+            const mdx = particles[i].x - mouse.x;
+            const mdy = particles[i].y - mouse.y;
+            const mdist = Math.hypot(mdx, mdy);
+            if (mdist < mouseMaxDistance) {
+              const mAlpha =
+                (1 - mdist / mouseMaxDistance) *
+                (baseLineAlpha * 1.5) *
+                attenI;
+              ctx.strokeStyle = accentColor;
+              ctx.globalAlpha = mAlpha;
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(mouse.x, mouse.y);
+              ctx.stroke();
+            }
+          }
         }
 
-        const pulseScale = 1 + Math.sin(p.pulsePhase) * 0.2;
-        const currentRadius = p.radius * pulseScale;
-        const pulseAlphaFactor =
-          (Math.sin(p.pulsePhase) + 1) * 0.5 * 0.5 + 0.5;
+        // 3. Render and animate Glowing Firefly Particles
+        particles.forEach((p) => {
+          if (!prefersReducedMotion) {
+            // Gentle deflection away from hero central text zone
+            const tdx = (p.x - textCenterX) / textRadiusX;
+            const tdy = (p.y - textCenterY) / textRadiusY;
+            const tDistSq = tdx * tdx + tdy * tdy;
+            if (tDistSq < 1.44 && tDistSq > 0.0001) {
+              const tDist = Math.sqrt(tDistSq);
+              // Smooth outward push
+              const push = (1.2 - Math.min(tDist, 1.2)) * 0.25;
+              p.vx += (tdx / tDist) * push;
+              p.vy += (tdy / tDist) * push;
+            }
 
-        // Layer 1: Ambient outer halo
-        ctx.fillStyle = accentColor;
-        ctx.globalAlpha = ambientAlpha * pulseAlphaFactor;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, currentRadius + 9, 0, Math.PI * 2);
-        ctx.fill();
+            p.x += p.vx;
+            p.y += p.vy;
 
-        // Layer 2: Core aura
-        ctx.fillStyle = accentColor;
-        ctx.globalAlpha = auraAlpha * pulseAlphaFactor;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, currentRadius + 4, 0, Math.PI * 2);
-        ctx.fill();
+            // Dampen velocity to prevent runaway speeds
+            const currentSpeed = Math.hypot(p.vx, p.vy);
+            if (currentSpeed > 0.65) {
+              p.vx = (p.vx / currentSpeed) * 0.65;
+              p.vy = (p.vy / currentSpeed) * 0.65;
+            }
 
-        // Layer 3: Solid bright firefly core
-        ctx.fillStyle = accentColor;
-        ctx.globalAlpha = coreAlpha * pulseAlphaFactor;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, currentRadius, 0, Math.PI * 2);
-        ctx.fill();
-      });
+            // Bounce off canvas boundaries
+            if (p.x < 0) {
+              p.x = 0;
+              p.vx *= -1;
+            } else if (p.x > width) {
+              p.x = width;
+              p.vx *= -1;
+            }
 
-      ctx.globalAlpha = 1;
-      animationFrameRef.current = requestAnimationFrame(render);
-    };
+            if (p.y < 0) {
+              p.y = 0;
+              p.vy *= -1;
+            } else if (p.y > height) {
+              p.y = height;
+              p.vy *= -1;
+            }
+
+            // Gentle mouse repulsion
+            if (mouse.x !== null && mouse.y !== null) {
+              const mdx = p.x - mouse.x;
+              const mdy = p.y - mouse.y;
+              const mdist = Math.hypot(mdx, mdy);
+              if (mdist < 100 && mdist > 0) {
+                const force = (100 - mdist) / 100;
+                p.x += (mdx / mdist) * force * 1.5;
+                p.y += (mdy / mdist) * force * 1.5;
+              }
+            }
+
+            p.pulsePhase += p.pulseSpeed;
+          }
+
+          const pulseScale = 1 + Math.sin(p.pulsePhase) * 0.2;
+          const currentRadius = p.radius * pulseScale;
+          const pulseAlphaFactor =
+            (Math.sin(p.pulsePhase) + 1) * 0.5 * 0.5 + 0.5;
+          const atten = getTextAttenuation(p.x, p.y);
+
+          // Layer 1: Ambient outer halo
+          ctx.fillStyle = accentColor;
+          ctx.globalAlpha = ambientAlpha * pulseAlphaFactor * atten;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, currentRadius + 9, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Layer 2: Core aura
+          ctx.fillStyle = accentColor;
+          ctx.globalAlpha = auraAlpha * pulseAlphaFactor * atten;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, currentRadius + 4, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Layer 3: Solid bright firefly core
+          ctx.fillStyle = accentColor;
+          ctx.globalAlpha = coreAlpha * pulseAlphaFactor * atten;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, currentRadius, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        ctx.globalAlpha = 1;
+        animationFrameRef.current = requestAnimationFrame(render);
+      };
 
     animationFrameRef.current = requestAnimationFrame(render);
 
