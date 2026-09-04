@@ -4,9 +4,11 @@
 [![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?style=for-the-badge&logo=vercel)](https://aicl-website.vercel.app)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-> **Note**: This repository contains the complete source code for the official user interface (UI) and frontend application of **AI Community Lucknow (AICL)**, accessible live at [aicommunitylucknow.live](https://aicommunitylucknow.live).
+> **Live Deployment**: [https://aicl-website.vercel.app](https://aicl-website.vercel.app)  
+> **Note**: This repository contains the complete source code for the official user interface (UI) and frontend application of **AI Community Lucknow (AICL)**, mirroring [aicommunitylucknow.live](https://aicommunitylucknow.live).
 
 ---
 
