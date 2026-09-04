@@ -1,0 +1,184 @@
+[
+  {
+    "id": 1,
+    "title": "[POSTPONED] Project to Product with AI",
+    "description": "PROJECT TO PRODUCT WITH AI\nA curated, hands-on meetup to help students, developers, working professionals, and founders transition from building projects to creating scalable, mark...",
+    "tags": [
+      "WORKSHOP",
+      "ALL LEVELS"
+    ],
+    "attendees": "180 Attend",
+    "date": "Sunday, August 16, 2026",
+    "time": "1:30 PM - 8:30 PM",
+    "category": "Workshops",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 2,
+    "title": "AI Lucknow Kickoff 2026: Hands-on AI Project Sprint",
+    "description": "AI LUCKNOW KICKOFF 2026: HANDS-ON AI PROJECT SPRINT\nAn exclusive hands-on sprint to build production-grade AI agents and applications. Join us for a day of learning, building, and ...",
+    "tags": [
+      "WORKSHOP",
+      "ALL LEVELS"
+    ],
+    "attendees": "250 Attend",
+    "date": "Sunday, July 5, 2026",
+    "time": "10:00 AM - 4:30 PM",
+    "category": "Meetups",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 3,
+    "title": "Build with AI \u2014 Gemma 4",
+    "description": "GDG LUCKNOW: BUILD WITH AI \u2014 GEMMA 4\nGDG Lucknow&#x27;s Build with AI is a community-driven event focused on hands-on exploration of Google AI technologies. This edition puts Gemma 4 at...",
+    "tags": [
+      "WORKSHOP",
+      "ALL LEVELS"
+    ],
+    "attendees": "250 Attend",
+    "date": "Friday, May 15, 2026",
+    "time": "10:00 AM - 4:30 PM",
+    "category": "Workshops",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 4,
+    "title": "AI Study JAM: Session 4 - Designing Production-Ready AI Agents with Pydantic AI",
+    "description": "This time, we move beyond basics and focus on building robust, production-ready AI systems with clarity and structure. Designing Production-Ready AI Agents with Pydantic AI.",
+    "tags": [
+      "WORKSHOP",
+      "BEGINNER"
+    ],
+    "attendees": "100+ Attend",
+    "date": "Saturday, March 7, 2026",
+    "time": "6:00 PM - 7:00 PM",
+    "category": "Sessions",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 5,
+    "title": "AI Study JAM: Session 3 - AI Agents \u2014 From Concept to Creation (Build Your First Agent from Scratch)",
+    "description": "This time, we go deeper into the world of AI Agents \u2014 From Concept to Creation (Build Your First Agent from Scratch). If you&#x27;ve been hearing about AI agents but never actually buil...",
+    "tags": [
+      "WORKSHOP",
+      "BEGINNER"
+    ],
+    "attendees": "100+ Attend",
+    "date": "Saturday, February 28, 2026",
+    "time": "6:00 PM - 7:00 PM",
+    "category": "Sessions",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 6,
+    "title": "AI Study JAM: Session 2 - Enhance Development Efficiency with Agentic Assistants : (Gemini CLI)",
+    "description": "Dive into Agentic Assistants and Gemini CLI to enhance your development efficiency with intelligent automation and real-world workflows.",
+    "tags": [
+      "WORKSHOP",
+      "BEGINNER"
+    ],
+    "attendees": "100+ Attend",
+    "date": "Saturday, February 21, 2026",
+    "time": "6:00 PM - 7:00 PM",
+    "category": "Sessions",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 7,
+    "title": "AI Study JAM: Session 1 - Beyond Chatbots: Building Dynamic Experiences with Flutter GenUI SDK",
+    "description": "Study Jam Series with an exciting hands-on session exploring how to move beyond traditional chatbots and build truly dynamic, AI-powered user experiences using the Flutter GenUI SD...",
+    "tags": [
+      "WORKSHOP",
+      "BEGINNER"
+    ],
+    "attendees": "100+ Attend",
+    "date": "Saturday, February 14, 2026",
+    "time": "6:00 PM - 7:00 PM",
+    "category": "Sessions",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 8,
+    "title": "AI Agent Arsenal: Building Powerful Tools with ADK: Pre-Hackathon Session 4 (Study Jam)",
+    "description": "Move beyond chatbots by using Google&#x27;s Agent Development Kit (ADK) to create autonomous agents that can search the web, analyze docs, and execute complex workflows.",
+    "tags": [
+      "WORKSHOP",
+      "ALL LEVELS"
+    ],
+    "attendees": "100+ Attend",
+    "date": "Tuesday, November 4, 2025",
+    "time": "8:00 PM - 9:00 PM",
+    "category": "Sessions",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 9,
+    "title": "Getting an edge with custom tuned model Gemma: Pre Hackathon session 3 (Study Jam)",
+    "description": "Learn to specialize Gemma models for specific domains using fine-tuning architectures and optimization strategies for better performance.",
+    "tags": [
+      "WORKSHOP",
+      "ALL LEVELS"
+    ],
+    "attendees": "100+ Attend",
+    "date": "Monday, November 3, 2025",
+    "time": "8:00 PM - 9:00 PM",
+    "category": "Sessions",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 10,
+    "title": "Building production application using Gemini CLI : Pre Hackathon session 2 (Study Jam)",
+    "description": "Speed up development by using the Gemini CLI for rapid prototyping, testing, and automation directly from the terminal.",
+    "tags": [
+      "WORKSHOP",
+      "ALL LEVELS"
+    ],
+    "attendees": "100+ Attend",
+    "date": "Sunday, November 2, 2025",
+    "time": "8:00 PM - 9:00 PM",
+    "category": "Sessions",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 11,
+    "title": "Optimizing prompts for efficient Gemini API results and building speedy applications using tools: Pre Hackathon session 1 (Study Jam)",
+    "description": "Advanced training on the Gemini API focused on reducing latency, managing token costs, and engineering high-impact prompts for production apps.",
+    "tags": [
+      "WORKSHOP",
+      "ALL LEVELS"
+    ],
+    "attendees": "100+ Attend",
+    "date": "Saturday, November 1, 2025",
+    "time": "8:00 PM - 9:00 PM",
+    "category": "Sessions",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 12,
+    "title": "Session 1: The Art of Asking AI \u2013 Prompt Engineering for Everyone | ML Study Jam - Lucknow",
+    "description": "Master techniques like Chain-of-Thought and ReAct, and learn to control parameters (Temperature/Top-p) for precise AI responses.",
+    "tags": [
+      "SESSION",
+      "BEGINNER"
+    ],
+    "attendees": "100+ Attend",
+    "date": "Sunday, October 19, 2025",
+    "time": "8:00 PM - 9:30 PM",
+    "category": "Sessions",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  },
+  {
+    "id": 13,
+    "title": "Session 2: Machine Learning Fundamentals with hands-on | ML Study Jam - Lucknow",
+    "description": "A hands-on introduction to Machine Learning principles (supervised/unsupervised) with live coding practice in Google Colab.",
+    "tags": [
+      "WORKSHOP",
+      "BEGINNER"
+    ],
+    "attendees": "180 Attend",
+    "date": "Saturday, October 19, 2024",
+    "time": "8:00 PM - 9:30 PM",
+    "category": "Sessions",
+    "link": "https://www.commudle.com/communities/tfug-lucknow"
+  }
+]
