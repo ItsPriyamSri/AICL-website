@@ -125,21 +125,6 @@ export function NeuralCanvas() {
       const maxDistance = 125;
       const mouseMaxDistance = 150;
 
-      // Text clearance zone (centered at hero display heading & subtitle)
-      const textCenterX = width * 0.5;
-      const textCenterY = height * 0.44;
-      const textRadiusX = Math.min(width * 0.46, 420);
-      const textRadiusY = Math.min(height * 0.22, 130);
-
-      const getTextAttenuation = (px: number, py: number) => {
-        const dx = (px - textCenterX) / textRadiusX;
-        const dy = (py - textCenterY) / textRadiusY;
-        const dSq = dx * dx + dy * dy;
-        if (dSq >= 1) return 1.0;
-        // Smooth quadratic attenuation down to 0.15 at center
-        return Math.max(0.15, dSq * dSq);
-      };
-
       const render = () => {
         if (document.hidden) {
           animationFrameRef.current = requestAnimationFrame(render);
@@ -152,28 +137,20 @@ export function NeuralCanvas() {
 
         // 1. Constellation lines between nearby particles
         for (let i = 0; i < particles.length; i++) {
-          const attenI = getTextAttenuation(particles[i].x, particles[i].y);
-
           for (let j = i + 1; j < particles.length; j++) {
             const dx = particles[i].x - particles[j].x;
             const dy = particles[i].y - particles[j].y;
             const dist = Math.hypot(dx, dy);
 
             if (dist < maxDistance) {
-              const attenJ = getTextAttenuation(particles[j].x, particles[j].y);
-              const lineAtten = Math.min(attenI, attenJ);
-
-              if (lineAtten > 0.05) {
-                const alpha =
-                  (1 - dist / maxDistance) * baseLineAlpha * lineAtten;
-                ctx.strokeStyle = accentColor;
-                ctx.globalAlpha = alpha;
-                ctx.lineWidth = 0.8;
-                ctx.beginPath();
-                ctx.moveTo(particles[i].x, particles[i].y);
-                ctx.lineTo(particles[j].x, particles[j].y);
-                ctx.stroke();
-              }
+              const alpha = (1 - dist / maxDistance) * baseLineAlpha;
+              ctx.strokeStyle = accentColor;
+              ctx.globalAlpha = alpha;
+              ctx.lineWidth = 0.8;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
             }
           }
 
@@ -184,9 +161,7 @@ export function NeuralCanvas() {
             const mdist = Math.hypot(mdx, mdy);
             if (mdist < mouseMaxDistance) {
               const mAlpha =
-                (1 - mdist / mouseMaxDistance) *
-                (baseLineAlpha * 1.5) *
-                attenI;
+                (1 - mdist / mouseMaxDistance) * (baseLineAlpha * 1.5);
               ctx.strokeStyle = accentColor;
               ctx.globalAlpha = mAlpha;
               ctx.lineWidth = 1;
@@ -201,27 +176,8 @@ export function NeuralCanvas() {
         // 3. Render and animate Glowing Firefly Particles
         particles.forEach((p) => {
           if (!prefersReducedMotion) {
-            // Gentle deflection away from hero central text zone
-            const tdx = (p.x - textCenterX) / textRadiusX;
-            const tdy = (p.y - textCenterY) / textRadiusY;
-            const tDistSq = tdx * tdx + tdy * tdy;
-            if (tDistSq < 1.44 && tDistSq > 0.0001) {
-              const tDist = Math.sqrt(tDistSq);
-              // Smooth outward push
-              const push = (1.2 - Math.min(tDist, 1.2)) * 0.25;
-              p.vx += (tdx / tDist) * push;
-              p.vy += (tdy / tDist) * push;
-            }
-
             p.x += p.vx;
             p.y += p.vy;
-
-            // Dampen velocity to prevent runaway speeds
-            const currentSpeed = Math.hypot(p.vx, p.vy);
-            if (currentSpeed > 0.65) {
-              p.vx = (p.vx / currentSpeed) * 0.65;
-              p.vy = (p.vy / currentSpeed) * 0.65;
-            }
 
             // Bounce off canvas boundaries
             if (p.x < 0) {
@@ -259,25 +215,24 @@ export function NeuralCanvas() {
           const currentRadius = p.radius * pulseScale;
           const pulseAlphaFactor =
             (Math.sin(p.pulsePhase) + 1) * 0.5 * 0.5 + 0.5;
-          const atten = getTextAttenuation(p.x, p.y);
 
           // Layer 1: Ambient outer halo
           ctx.fillStyle = accentColor;
-          ctx.globalAlpha = ambientAlpha * pulseAlphaFactor * atten;
+          ctx.globalAlpha = ambientAlpha * pulseAlphaFactor;
           ctx.beginPath();
           ctx.arc(p.x, p.y, currentRadius + 9, 0, Math.PI * 2);
           ctx.fill();
 
           // Layer 2: Core aura
           ctx.fillStyle = accentColor;
-          ctx.globalAlpha = auraAlpha * pulseAlphaFactor * atten;
+          ctx.globalAlpha = auraAlpha * pulseAlphaFactor;
           ctx.beginPath();
           ctx.arc(p.x, p.y, currentRadius + 4, 0, Math.PI * 2);
           ctx.fill();
 
           // Layer 3: Solid bright firefly core
           ctx.fillStyle = accentColor;
-          ctx.globalAlpha = coreAlpha * pulseAlphaFactor * atten;
+          ctx.globalAlpha = coreAlpha * pulseAlphaFactor;
           ctx.beginPath();
           ctx.arc(p.x, p.y, currentRadius, 0, Math.PI * 2);
           ctx.fill();

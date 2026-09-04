@@ -66,18 +66,14 @@ export default function HomePage() {
             </motion.span>
           </h1>
 
-          {/* Subtitle */}
+          {/* Subtitle with elevated glass plane for distinct z-depth */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="relative max-w-2xl mb-10 px-4 py-2"
+            className="relative z-10 max-w-2xl mb-10 px-6 py-4 rounded-2xl bg-bg/20 backdrop-blur-[2.5px] border border-border/25 shadow-[0_4px_24px_rgba(0,0,0,0.2)]"
           >
-            <div
-              className="absolute inset-0 -z-10 rounded-2xl bg-radial from-bg/95 via-bg/60 to-transparent blur-md pointer-events-none"
-              aria-hidden="true"
-            />
-            <p className="font-sans text-muted text-base md:text-lg leading-relaxed relative z-10 [text-shadow:0_1px_12px_var(--bg)]">
+            <p className="font-sans text-muted text-base md:text-lg leading-relaxed [text-shadow:0_1px_8px_var(--bg)]">
               Building the AI/ML community in the City of Nawabs. Join us for workshops, hackathons,
               and collaborative projects that push the boundaries of machine learning and artificial
               intelligence.
