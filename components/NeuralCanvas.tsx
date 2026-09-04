@@ -9,17 +9,18 @@ interface Particle {
   vx: number;
   vy: number;
   radius: number;
-  baseRadius: number;
-  pulseSpeed: number;
   pulsePhase: number;
-  alpha: number;
+  pulseSpeed: number;
 }
 
 export function NeuralCanvas() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const mouseRef = useRef<{ x: number | null; y: number | null }>({ x: null, y: null });
+  const mouseRef = useRef<{ x: number | null; y: number | null }>({
+    x: null,
+    y: null,
+  });
   const { resolvedTheme } = useTheme();
 
   useEffect(() => {
@@ -30,45 +31,48 @@ export function NeuralCanvas() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let width = 0;
-    let height = 0;
+    let width = container.clientWidth || window.innerWidth;
+    let height = container.clientHeight || window.innerHeight;
     let particles: Particle[] = [];
-    let isVisible = true;
 
-    // Check reduced motion
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
-    // Set colors according to theme
     const isDark = resolvedTheme !== "light";
     const accentColor = isDark ? "#C6FF3D" : "#436600";
-    const glowAlpha = isDark ? 0.28 : 0.16;
+    const baseLineAlpha = isDark ? 0.22 : 0.15;
+    const coreAlpha = isDark ? 0.95 : 0.85;
+    const auraAlpha = isDark ? 0.35 : 0.22;
+    const ambientAlpha = isDark ? 0.15 : 0.08;
 
-    const initParticles = (w: number, h: number) => {
-      // Scale count with screen size (35 on mobile, 65 on desktop)
-      const count = Math.min(Math.max(Math.floor(w / 22), 30), 65);
-      particles = [];
+    const createParticles = (w: number, h: number) => {
+      const count = Math.min(Math.max(Math.floor(w / 22), 35), 70);
+      const list: Particle[] = [];
       for (let i = 0; i < count; i++) {
-        const radius = Math.random() * 1.8 + 1.2;
-        particles.push({
+        list.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4,
-          radius,
-          baseRadius: radius,
-          pulseSpeed: Math.random() * 0.03 + 0.015,
+          vx: (Math.random() - 0.5) * 0.45,
+          vy: (Math.random() - 0.5) * 0.45,
+          radius: Math.random() * 1.8 + 1.8, // 1.8px - 3.6px
           pulsePhase: Math.random() * Math.PI * 2,
-          alpha: Math.random() * 0.5 + 0.5,
+          pulseSpeed: Math.random() * 0.025 + 0.015,
         });
       }
+      return list;
     };
 
-    const handleResize = () => {
+    const setupCanvas = () => {
+      if (!container || !canvas) return;
       const rect = container.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) return;
+      const newWidth = rect.width || window.innerWidth;
+      const newHeight = rect.height || window.innerHeight;
 
-      width = rect.width;
-      height = rect.height;
+      if (newWidth === 0 || newHeight === 0) return;
+
+      width = newWidth;
+      height = newHeight;
 
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.floor(width * dpr);
@@ -79,9 +83,9 @@ export function NeuralCanvas() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       if (particles.length === 0) {
-        initParticles(width, height);
+        particles = createParticles(width, height);
       } else {
-        // Clamp particles inside updated bounds
+        // Wrap particles gracefully within new bounds
         particles.forEach((p) => {
           if (p.x > width) p.x = Math.random() * width;
           if (p.y > height) p.y = Math.random() * height;
@@ -89,10 +93,16 @@ export function NeuralCanvas() {
       }
     };
 
-    handleResize();
+    setupCanvas();
+
+    const handleWindowResize = () => {
+      setupCanvas();
+    };
+
+    window.addEventListener("resize", handleWindowResize, { passive: true });
 
     const resizeObserver = new ResizeObserver(() => {
-      handleResize();
+      setupCanvas();
     });
     resizeObserver.observe(container);
 
@@ -111,29 +121,21 @@ export function NeuralCanvas() {
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     window.addEventListener("mouseleave", handleMouseLeave, { passive: true });
 
-    // IntersectionObserver to pause rendering off-screen
-    const intersectionObserver = new IntersectionObserver(
-      ([entry]) => {
-        isVisible = entry.isIntersecting;
-      },
-      { threshold: 0 }
-    );
-    intersectionObserver.observe(container);
+    // Dedicated continuous RAF loop
+    const maxDistance = 125;
+    const mouseMaxDistance = 150;
 
-    // Continuous Animation Loop
     const render = () => {
-      if (!isVisible || width === 0 || height === 0) {
+      if (document.hidden) {
         animationFrameRef.current = requestAnimationFrame(render);
         return;
       }
 
       ctx.clearRect(0, 0, width, height);
 
-      // Connection threshold distance
-      const maxDistance = 115;
       const mouse = mouseRef.current;
 
-      // 1. Draw connecting neural constellation lines
+      // 1. Constellation lines between nearby particles
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -141,25 +143,42 @@ export function NeuralCanvas() {
           const dist = Math.hypot(dx, dy);
 
           if (dist < maxDistance) {
-            const lineAlpha = (1 - dist / maxDistance) * (isDark ? 0.18 : 0.12);
+            const alpha = (1 - dist / maxDistance) * baseLineAlpha;
             ctx.strokeStyle = accentColor;
-            ctx.globalAlpha = lineAlpha;
-            ctx.lineWidth = 0.75;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = 0.8;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
           }
         }
+
+        // 2. Interactive line connecting firefly to mouse cursor
+        if (mouse.x !== null && mouse.y !== null) {
+          const mdx = particles[i].x - mouse.x;
+          const mdy = particles[i].y - mouse.y;
+          const mdist = Math.hypot(mdx, mdy);
+          if (mdist < mouseMaxDistance) {
+            const mAlpha = (1 - mdist / mouseMaxDistance) * (baseLineAlpha * 1.5);
+            ctx.strokeStyle = accentColor;
+            ctx.globalAlpha = mAlpha;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.stroke();
+          }
+        }
       }
 
-      // 2. Update & draw glowing firefly particles
+      // 3. Render and animate Glowing Firefly Particles
       particles.forEach((p) => {
         if (!prefersReducedMotion) {
           p.x += p.vx;
           p.y += p.vy;
 
-          // Bounce off boundary edges with margin
+          // Bounce off canvas boundaries
           if (p.x < 0) {
             p.x = 0;
             p.vx *= -1;
@@ -176,39 +195,43 @@ export function NeuralCanvas() {
             p.vy *= -1;
           }
 
-          // Gentle mouse repulsion / deflection
+          // Gentle mouse repulsion
           if (mouse.x !== null && mouse.y !== null) {
             const mdx = p.x - mouse.x;
             const mdy = p.y - mouse.y;
             const mdist = Math.hypot(mdx, mdy);
-            if (mdist < 140 && mdist > 0) {
-              const force = (140 - mdist) / 140;
-              p.x += (mdx / mdist) * force * 1.2;
-              p.y += (mdy / mdist) * force * 1.2;
+            if (mdist < 100 && mdist > 0) {
+              const force = (100 - mdist) / 100;
+              p.x += (mdx / mdist) * force * 1.5;
+              p.y += (mdy / mdist) * force * 1.5;
             }
           }
 
-          // Firefly pulsating effect
           p.pulsePhase += p.pulseSpeed;
         }
 
-        const pulseScale = 1 + Math.sin(p.pulsePhase) * 0.25;
-        const currentRadius = p.baseRadius * pulseScale;
-        const currentAlpha = Math.min(
-          1,
-          Math.max(0.2, (Math.sin(p.pulsePhase) + 1) * 0.5 * 0.7 + 0.3)
-        );
+        const pulseScale = 1 + Math.sin(p.pulsePhase) * 0.2;
+        const currentRadius = p.radius * pulseScale;
+        const pulseAlphaFactor =
+          (Math.sin(p.pulsePhase) + 1) * 0.5 * 0.5 + 0.5;
 
-        // Soft outer aura / glow ring
+        // Layer 1: Ambient outer halo
         ctx.fillStyle = accentColor;
-        ctx.globalAlpha = currentAlpha * glowAlpha;
+        ctx.globalAlpha = ambientAlpha * pulseAlphaFactor;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, currentRadius + 4.5, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, currentRadius + 9, 0, Math.PI * 2);
         ctx.fill();
 
-        // Inner glowing firefly core
+        // Layer 2: Core aura
         ctx.fillStyle = accentColor;
-        ctx.globalAlpha = currentAlpha;
+        ctx.globalAlpha = auraAlpha * pulseAlphaFactor;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, currentRadius + 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Layer 3: Solid bright firefly core
+        ctx.fillStyle = accentColor;
+        ctx.globalAlpha = coreAlpha * pulseAlphaFactor;
         ctx.beginPath();
         ctx.arc(p.x, p.y, currentRadius, 0, Math.PI * 2);
         ctx.fill();
@@ -225,7 +248,7 @@ export function NeuralCanvas() {
         cancelAnimationFrame(animationFrameRef.current);
       }
       resizeObserver.disconnect();
-      intersectionObserver.disconnect();
+      window.removeEventListener("resize", handleWindowResize);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseleave", handleMouseLeave);
     };
@@ -234,7 +257,7 @@ export function NeuralCanvas() {
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 -z-10 h-full w-full overflow-hidden pointer-events-none"
+      className="absolute inset-0 z-0 h-full w-full overflow-hidden pointer-events-none"
       aria-hidden="true"
     >
       <canvas

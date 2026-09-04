@@ -20,14 +20,14 @@ export default function HomePage() {
   return (
     <div className="flex flex-col w-full">
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[90vh] lg:min-h-screen w-full flex flex-col justify-center items-center py-20 px-6 md:px-12 select-none overflow-hidden">
+      <section className="relative isolate min-h-[90vh] lg:min-h-screen w-full flex flex-col justify-center items-center py-20 px-6 md:px-12 select-none overflow-hidden">
         {/* Background Neural Canvas & Jaali Pattern */}
-        <div className="hero-bg-container absolute inset-0 -z-10 h-[115%] w-full pointer-events-none">
+        <div className="hero-bg-container absolute inset-0 z-0 h-[115%] w-full pointer-events-none">
           <NeuralCanvas />
           <JaaliPattern opacity={0.04} />
         </div>
 
-        <div className="max-w-4xl mx-auto flex flex-col items-center text-center z-10">
+        <div className="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10">
           {/* Lucknow Badge */}
           <motion.span
             initial={{ opacity: 0, y: 15 }}
